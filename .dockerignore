@@ -1,0 +1,7 @@
+.bundle/
+.DS_Store
+.git/
+.idea/
+binstubs/
+scratch/
+vendor/

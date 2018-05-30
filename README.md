@@ -1,5 +1,19 @@
 # Capital One coding challenge
 
+### My Submission
+
+1. [Program source code](https://github.com/jwfearn/capone)
+2. To run, install
+   [Docker CE](https://www.docker.com/community-edition#/download),
+   then, in your shell:
+   ```sh
+   docker run -it jwfearn/capone
+   ```
+3. To run tests:
+   ```sh
+   docker run -it jwfearn/capone xxx
+   ```
+
 ### Usage
 ```
 mix capone.challenge
@@ -28,6 +42,8 @@ format if you see fit.
   "GOOGL": [
     {"month":"2017-01", "average_open": "815.43", "average_close": "$818.34"},
     {"month":"2017-02", "average_open": "825.87", "average_close": "$822.73"},
+    {"month":"2017-03", "average_open": "945.24", "average_close": "$951.52"},
+    {"month":"2017-04", "average_open": "945.24", "average_close": "$951.52"},
     {"month":"2017-05", "average_open": "945.24", "average_close": "$951.52"},
     {"month":"2017-06", "average_open": "975.37", "average_close": "$977.11"}
   ]

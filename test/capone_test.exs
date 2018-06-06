@@ -8,12 +8,6 @@ defmodule CaponeTest do
 
   @tag :external
   describe "challenge" do
-    test "produces valid JSON" do
-      actual =
-        Date.range(~D[2017-01-03], ~D[2017-01-04])
-        |> Capone.challenge()
-    end
-
     @tag :skip
     test "print default output" do
       Capone.challenge()

@@ -23,7 +23,7 @@ defmodule Quandl.Client do
       ticker: tickers |> Enum.join(","),
       "date.gte": start_date |> Date.to_iso8601(),
       "date.lte": end_date |> Date.to_iso8601(),
-      "qopts.columns": Price.column_strs() |> Enum.join(",")
+      "qopts.columns": Price.columns() |> Enum.join(",")
     ]
 
     with response <- Tesla.get(client, "/api/v3/datatables/WIKI/PRICES.json", query: query) do

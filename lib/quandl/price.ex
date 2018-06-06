@@ -1,28 +1,14 @@
 defmodule Quandl.Price do
   @moduledoc """
-  A module for converting JSON stock price data from Quandl into structs.
+  Utilties for working with Quandl JSON stock price data.
   See: https://www.quandl.com/databases/WIKIP
   """
 
-  # Use this table to avoid creating runtime (non-garbage-collected) atoms.
-  @column_atoms_by_str %{
-    "close" => :close,
-    "date" => :date,
-    "high" => :high,
-    "low" => :low,
-    "open" => :open,
-    "ticker" => :ticker,
-    "volume" => :volume
-  }
+  @columns ~w[close date high low open ticker volume]a
+  @enforce_keys @columns
+  defstruct @columns
 
-  @column_strs Map.keys(@column_atoms_by_str)
-
-  @enforce_keys Map.values(@column_atoms_by_str)
-  defstruct Map.values(@column_atoms_by_str)
-
-  def column_atom(column_str), do: Map.get(@column_atoms_by_str, column_str)
-
-  def column_strs(), do: @column_strs
+  def columns(), do: @columns
 
   def list_from_json_map(%{"datatable" => %{"data" => rows, "columns" => schemas}}) do
     rows |> Enum.map(&new(&1, schemas))
@@ -41,7 +27,7 @@ defmodule Quandl.Price do
   def spread(%__MODULE__{high: high, low: low}), do: high - low
 
   defp pair({%{"name" => column_str}, value}) do
-    column_atom = Map.get(@column_atoms_by_str, column_str)
+    column_atom = String.to_existing_atom(column_str)
     {column_atom, value |> transform(column_atom)}
   end
 

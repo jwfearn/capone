@@ -142,10 +142,6 @@ defmodule Capone.StatsTest do
     assert_json_structure(stats_json_structure_str, json_str)
   end
 
-  defp assert_valid_json_str(str) do
-    assert {:ok, _} = Jason.decode(str)
-  end
-
   def assert_json_structure(expected_json_structure_str, actual_json_str) do
     {:ok, expected} = Jason.decode(expected_json_structure_str)
     {:ok, actual} = Jason.decode(actual_json_str)

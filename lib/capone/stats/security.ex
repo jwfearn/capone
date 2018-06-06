@@ -1,9 +1,9 @@
 defmodule Capone.Stats.Security do
   alias Quandl.Price
 
-  @enforce_keys [:ticker]
+  @enforce_keys ~w[ticker]a
   defstruct count: 0,
-            loser_count: 0,
+            losing_days_count: 0,
             max_spread: 0,
             sum_volume: 0,
             ticker: nil
@@ -18,7 +18,10 @@ defmodule Capone.Stats.Security do
   end
 
   def count(%__MODULE__{count: count}), do: count
-  def avg_volume(%__MODULE__{count: count, sum_volume: sum_volume}), do: sum_volume / count
+
+  def avg_volume(%__MODULE__{count: count, sum_volume: sum_volume}) do
+    Float.round(sum_volume / count, 12)
+  end
 
   defp accumulate(%__MODULE__{ticker: ticker} = acc, %Price{} = price) do
     # raise unless tickers match
@@ -30,7 +33,7 @@ defmodule Capone.Stats.Security do
   end
 
   defp update_loser_count(%__MODULE__{} = ticker, gain) when gain < 0 do
-    %__MODULE__{ticker | loser_count: ticker.loser_count + 1}
+    %__MODULE__{ticker | losing_days_count: ticker.losing_days_count + 1}
   end
 
   defp update_loser_count(%__MODULE__{} = ticker, _), do: ticker

@@ -18,7 +18,7 @@ defmodule Quandl.Client do
 
   def prices(_, [], _), do: []
 
-  def prices(client, tickers, %Date.Range{first: start_date, last: end_date} = date_range) do
+  def prices(client, tickers, %Date.Range{first: start_date, last: end_date}) do
     query = [
       ticker: tickers |> Enum.join(","),
       "date.gte": start_date |> Date.to_iso8601(),

@@ -6,6 +6,7 @@ defmodule Capone.Stats do
 
   defstruct biggest_loser: nil,
             busy_days: [],
+            max_spread_days: [],
             months: %{},
             securities: []
 
@@ -32,12 +33,16 @@ defmodule Capone.Stats do
     biggest_loser_security =
       securities_by_ticker
       |> Map.values()
-      |> Enum.max_by(& &1.loser_count)
+      |> Enum.max_by(& &1.losing_days_count)
 
     busy_days =
       prices
       |> Day.list_from_prices(&busy?(&1, securities_by_ticker, @default_busy_factor))
-      |> Enum.sort_by(& &1.date)
+
+    max_spread_days =
+      prices
+      |> Day.list_from_prices(&max_spread?(&1, securities_by_ticker))
+      |> Enum.uniq_by(& &1.ticker)
 
     months_by_ticker =
       prices
@@ -53,6 +58,7 @@ defmodule Capone.Stats do
     %__MODULE__{
       biggest_loser: biggest_loser_security,
       busy_days: busy_days,
+      max_spread_days: max_spread_days,
       months: months_by_ticker,
       securities: securities
     }
@@ -71,6 +77,10 @@ defmodule Capone.Stats do
       |> Security.avg_volume()
 
     volume > avg_volume * busy_factor
+  end
+
+  defp max_spread?(%Price{ticker: ticker} = price, %{} = securities_by_ticker) do
+    Price.spread(price) == Map.get(securities_by_ticker, ticker).max_spread
   end
 
   defp aggregate_months({month_str, ticker_prices}) do

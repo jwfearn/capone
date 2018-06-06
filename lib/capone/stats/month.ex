@@ -1,7 +1,7 @@
 defmodule Capone.Stats.Month do
   alias Quandl.Price
 
-  @enforce_keys [:month_str, :ticker]
+  @enforce_keys ~w[month_str ticker]a
   defstruct count: 0,
             month_str: nil,
             sum_close: 0,

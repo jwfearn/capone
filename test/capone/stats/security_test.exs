@@ -36,9 +36,16 @@ defmodule Capone.Stats.TickerTest do
     |> assert_security(2, 1, 35, 2_000, "F")
   end
 
-  def assert_security(%Security{} = security, count, loser_count, max_spread, sum_volume, ticker) do
+  def assert_security(
+        %Security{} = security,
+        count,
+        losing_days_count,
+        max_spread,
+        sum_volume,
+        ticker
+      ) do
     assert security.count == count
-    assert security.loser_count == loser_count
+    assert security.losing_days_count == losing_days_count
     assert security.max_spread == max_spread
     assert security.sum_volume == sum_volume
     assert security.ticker == ticker

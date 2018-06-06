@@ -21,7 +21,7 @@ defmodule Capone.StatsTest do
         %Price{
           close: 100,
           date: ~D[2017-01-04],
-          high: 105,
+          high: 110,
           low: 90,
           open: 95,
           ticker: "F",
@@ -52,17 +52,20 @@ defmodule Capone.StatsTest do
   test "without filter", context do
     expected_loser = %Security{
       count: 2,
-      loser_count: 1,
-      max_spread: 15,
+      losing_days_count: 1,
+      max_spread: 20,
       sum_volume: 2_000,
       ticker: "F"
     }
 
     expected_busy_days = [
-      %Day{date: ~D[2017-01-03], ticker: "F", volume: 1_500}
+      %Day{date: ~D[2017-01-03], spread: 15, ticker: "F", volume: 1_500}
     ]
 
-    expected_max_spread_days = %{}
+    expected_max_spread_days = [
+      %Day{date: ~D[2017-01-03], spread: 0, ticker: "T", volume: 1_500},
+      %Day{date: ~D[2017-01-04], spread: 0, ticker: "F", volume: 500}
+    ]
 
     expected_months = %{
       "F" => [
@@ -89,7 +92,7 @@ defmodule Capone.StatsTest do
 
     expected_securities = [
       expected_loser,
-      %Security{count: 2, loser_count: 0, max_spread: 0, sum_volume: 1_000, ticker: "T"}
+      %Security{count: 2, losing_days_count: 0, max_spread: 0, sum_volume: 1_000, ticker: "T"}
     ]
 
     context.prices
@@ -115,7 +118,7 @@ defmodule Capone.StatsTest do
     security_json_structure = """
     {
       "count": 0,
-      "loser_count": 0,
+      "losing_days_count": 0,
       "max_spread": 0,
       "sum_volume": 0,
       "ticker": ""

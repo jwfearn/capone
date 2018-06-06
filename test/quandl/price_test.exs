@@ -65,13 +65,36 @@ defmodule Quandl.PriceTest do
     }
     """
 
-    [json_map: Jason.decode!(json_str)]
+    [
+      json_map: Jason.decode!(json_str),
+      price: %Price{
+        close: 12.59,
+        date: ~D[2017-01-03],
+        high: 12.6,
+        low: 12.13,
+        open: 12.2,
+        ticker: "F",
+        volume: 40_510_821
+      }
+    ]
   end
 
   test "list_from_json_map", context do
     [a | [b]] = Price.list_from_json_map(context.json_map)
     a |> assert_price(12.59, ~D[2017-01-03], 12.6, 12.13, 12.2, "F", 40_510_821)
     b |> assert_price(13.17, ~D[2017-01-04], 13.27, 12.74, 12.77, "F", 77_631_929)
+  end
+
+  test "month_str", context do
+    assert "2017-01" == Price.month_str(context.price)
+  end
+
+  test "gain", context do
+    assert 0.39 == Price.gain(context.price)
+  end
+
+  test "spread", context do
+    assert 0.47 == Price.spread(context.price)
   end
 
   def assert_price(%Price{} = price, close, date, high, low, open, ticker, volume) do

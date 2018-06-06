@@ -3,11 +3,20 @@ defmodule Capone.Stats.Day do
 
   @enforce_keys ~w[date spread ticker volume]a
   defstruct date: nil,
-            spread: 0,
+            spread: 0.0,
             ticker: nil,
-            volume: 0
+            volume: 0.0
 
   @type t :: %__MODULE__{}
+
+  def from_price(%Price{} = price) do
+    %__MODULE__{
+      date: price.date,
+      spread: Price.spread(price),
+      ticker: price.ticker,
+      volume: price.volume
+    }
+  end
 
   def list_from_prices([%Price{} | _] = prices, filter_fun \\ &pass/1) do
     prices
@@ -20,10 +29,7 @@ defmodule Capone.Stats.Day do
   end
 
   defp accumulate(acc, _, false), do: acc
-
-  defp accumulate(acc, %Price{date: date, ticker: ticker, volume: volume} = price, true) do
-    [%__MODULE__{date: date, spread: Price.spread(price), ticker: ticker, volume: volume} | acc]
-  end
+  defp accumulate(acc, %Price{} = price, true), do: [from_price(price) | acc]
 
   defp pass(_price), do: true
 end

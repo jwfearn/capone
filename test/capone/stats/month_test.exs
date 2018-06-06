@@ -48,12 +48,18 @@ defmodule Capone.Stats.MonthTest do
     assert month.count == count
     assert month.ticker == ticker
     assert month.month_str == month_str
-    assert Month.avg_open(month) == avg_open
-    assert Month.avg_close(month) == avg_close
-    assert Month.avg_volume(month) == avg_volume
-    assert month.sum_open == avg_open * count
-    assert month.sum_close == avg_close * count
-    assert month.sum_volume == avg_volume * count
+    assert_float(Month.avg_open(month), avg_open)
+    assert_float(Month.avg_close(month), avg_close)
+    assert_volume(Month.avg_volume(month), avg_volume)
+    assert_float(month.sum_open, avg_open * count)
+    assert_float(month.sum_close, avg_close * count)
+    assert_volume(month.sum_volume, avg_volume * count)
     month
   end
+
+  @delta12 0.000_000_000_000_1
+  @delta15 0.000_000_000_000_000_1
+
+  def assert_float(a, b, delta \\ @delta12), do: assert_in_delta(a, b, delta)
+  def assert_volume(a, b), do: assert_float(a, b, @delta15)
 end

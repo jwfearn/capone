@@ -80,8 +80,8 @@ defmodule Quandl.PriceTest do
     ]
   end
 
-  test "list_from_json_map", context do
-    [a | [b]] = Price.list_from_json_map(context.json_map)
+  test "list_from_map", context do
+    [a | [b]] = Price.list_from_map(context.json_map)
     a |> assert_price(12.59, ~D[2017-01-03], 12.6, 12.13, 12.2, "F", 40_510_821)
     b |> assert_price(13.17, ~D[2017-01-04], 13.27, 12.74, 12.77, "F", 77_631_929)
   end
@@ -91,20 +91,26 @@ defmodule Quandl.PriceTest do
   end
 
   test "gain", context do
-    assert 0.39 == Price.gain(context.price)
+    assert_float(Price.gain(context.price), 0.39)
   end
 
   test "spread", context do
-    assert 0.47 == Price.spread(context.price)
+    assert_float(Price.spread(context.price), 0.47)
   end
 
   def assert_price(%Price{} = price, close, date, high, low, open, ticker, volume) do
-    assert price.close == close
+    assert_float(price.close, close)
     assert price.date == date
-    assert price.high == high
-    assert price.low == low
-    assert price.open == open
+    assert_float(price.high, high)
+    assert_float(price.low, low)
+    assert_float(price.open, open)
     assert price.ticker == ticker
-    assert price.volume == volume
+    assert_volume(price.volume, volume)
   end
+
+  @delta12 0.000_000_000_000_1
+  @delta15 0.000_000_000_000_000_1
+
+  def assert_float(a, b, delta \\ @delta12), do: assert_in_delta(a, b, delta)
+  def assert_volume(a, b), do: assert_float(a, b, @delta15)
 end

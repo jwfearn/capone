@@ -10,29 +10,51 @@ defmodule Quandl.Price do
 
   def columns(), do: @columns
 
-  def list_from_json_map(%{"datatable" => %{"data" => rows, "columns" => schemas}}) do
-    rows |> Enum.map(&new(&1, schemas))
+  def list_from_map(%{"datatable" => %{"data" => rows, "columns" => schemas}}) do
+    rows
+    |> Enum.map(&new(&1, schemas))
   end
 
   # Values order must match schemas order. Schemas order unspecified.
   def new(values, schemas) do
-    fields = schemas |> Enum.zip(values) |> Enum.map(&pair/1)
+    fields =
+      schemas
+      |> Enum.zip(values)
+      |> Enum.map(&transform/1)
+
     struct(__MODULE__, fields)
   end
 
+  # Useful for testing
+  def new(fields), do: struct(__MODULE__, fields |> Enum.map(&default_transform/1))
+
   def month_str(%__MODULE__{date: date}), do: date |> Date.to_iso8601() |> String.slice(0..6)
 
-  def gain(%__MODULE__{open: buy, close: sell}), do: Float.round(1.0 * sell - buy, 12)
+  def gain(%__MODULE__{open: buy, close: sell}), do: sell - buy
 
-  def spread(%__MODULE__{high: high, low: low}), do: Float.round(1.0 * high - low, 12)
+  def spread(%__MODULE__{high: high, low: low}), do: high - low
 
-  defp pair({%{"name" => column_str, "type" => type}, value}) do
-    column_atom = String.to_existing_atom(column_str)
-    {column_atom, value |> transform(column_atom, type)}
+  defp transform({%{"name" => column_str, "type" => type}, value}) do
+    {String.to_existing_atom(column_str), value |> from_type(type)}
   end
 
-  defp transform(value, _, "Date"), do: value |> Date.from_iso8601!()
-  defp transform(value, :volume, "BigDecimal" <> _), do: value
-  defp transform(value, _, "BigDecimal" <> _), do: value
-  defp transform(value, _, _), do: value
+  defp from_type(value, "BigDecimal" <> format) do
+    [_, precision, scale] = Regex.run(~r/\((\d*),(\d*)\)/, format)
+
+    value
+    |> from_big_decimal(precision: Integer.parse(precision), scale: Integer.parse(scale))
+  end
+
+  defp from_type(value, "Date"), do: value |> Date.from_iso8601!()
+  defp from_type(value, _), do: value
+
+  # TODO: use options
+  defp from_big_decimal(value, precision: _, scale: _), do: 1.0 * value
+
+  # Used only by new/1
+  defp default_transform({column, value}), do: {column, value |> from_column(column)}
+  defp from_column(value, :date), do: value
+  defp from_column(value, :ticker), do: value
+  defp from_column(value, :volume), do: from_type(value, "BigDecimal(37,15)")
+  defp from_column(value, _), do: from_type(value, "BigDecimal(34,12)")
 end

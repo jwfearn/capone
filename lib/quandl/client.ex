@@ -27,7 +27,7 @@ defmodule Quandl.Client do
     ]
 
     with response <- Tesla.get(client, "/api/v3/datatables/WIKI/PRICES.json", query: query) do
-      Price.list_from_json_map(response.body)
+      Price.list_from_map(response.body)
     end
   end
 

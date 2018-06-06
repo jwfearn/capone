@@ -46,6 +46,12 @@ defmodule Capone.Stats.DayTest do
   def assert_day(%Day{} = day, date, ticker, volume) do
     assert day.date == date
     assert day.ticker == ticker
-    assert day.volume == volume
+    assert_volume(day.volume, volume)
   end
+
+  @delta12 0.000_000_000_000_1
+  @delta15 0.000_000_000_000_000_1
+
+  def assert_float(a, b, delta \\ @delta12), do: assert_in_delta(a, b, delta)
+  def assert_volume(a, b), do: assert_float(a, b, @delta15)
 end

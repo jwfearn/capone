@@ -46,8 +46,14 @@ defmodule Capone.Stats.TickerTest do
       ) do
     assert security.count == count
     assert security.losing_days_count == losing_days_count
-    assert security.max_spread == max_spread
-    assert security.sum_volume == sum_volume
+    assert_float(security.max_spread, max_spread)
+    assert_volume(security.sum_volume, sum_volume)
     assert security.ticker == ticker
   end
+
+  @delta12 0.000_000_000_000_1
+  @delta15 0.000_000_000_000_000_1
+
+  def assert_float(a, b, delta \\ @delta12), do: assert_in_delta(a, b, delta)
+  def assert_volume(a, b), do: assert_float(a, b, @delta15)
 end

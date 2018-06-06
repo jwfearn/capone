@@ -4,8 +4,8 @@ defmodule Capone.Stats.Security do
   @enforce_keys ~w[ticker]a
   defstruct count: 0,
             losing_days_count: 0,
-            max_spread: 0,
-            sum_volume: 0,
+            max_spread: 0.0,
+            sum_volume: 0.0,
             ticker: nil
 
   @type t :: %__MODULE__{}
@@ -20,7 +20,7 @@ defmodule Capone.Stats.Security do
   def count(%__MODULE__{count: count}), do: count
 
   def avg_volume(%__MODULE__{count: count, sum_volume: sum_volume}) do
-    Float.round(sum_volume / count, 12)
+    sum_volume / count
   end
 
   defp accumulate(%__MODULE__{ticker: ticker} = acc, %Price{} = price) do
@@ -32,16 +32,19 @@ defmodule Capone.Stats.Security do
     |> update_max_spread(Price.spread(price))
   end
 
-  defp update_loser_count(%__MODULE__{} = ticker, gain) when gain < 0 do
-    %__MODULE__{ticker | losing_days_count: ticker.losing_days_count + 1}
+  defp update_loser_count(%__MODULE__{} = security, gain) do
+    if gain < 0 do
+      %__MODULE__{security | losing_days_count: security.losing_days_count + 1}
+    else
+      security
+    end
   end
 
-  defp update_loser_count(%__MODULE__{} = ticker, _), do: ticker
-
-  defp update_max_spread(%__MODULE__{max_spread: max_spread} = ticker, spread)
-       when spread > max_spread do
-    %__MODULE__{ticker | max_spread: spread}
+  defp update_max_spread(%__MODULE__{max_spread: max_spread} = security, spread) do
+    if :spread > max_spread do
+      %__MODULE__{security | max_spread: spread}
+    else
+      security
+    end
   end
-
-  defp update_max_spread(%__MODULE__{} = ticker, _), do: ticker
 end

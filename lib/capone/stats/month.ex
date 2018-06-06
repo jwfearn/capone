@@ -4,9 +4,9 @@ defmodule Capone.Stats.Month do
   @enforce_keys ~w[month_str ticker]a
   defstruct count: 0,
             month_str: nil,
-            sum_close: 0,
-            sum_open: 0,
-            sum_volume: 0,
+            sum_close: 0.0,
+            sum_open: 0.0,
+            sum_volume: 0.0,
             ticker: nil
 
   @type t :: %__MODULE__{}

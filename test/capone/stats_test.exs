@@ -9,7 +9,7 @@ defmodule Capone.StatsTest do
   setup_all do
     [
       prices: [
-        %Price{
+        Price.new(
           close: 95,
           date: ~D[2017-01-03],
           high: 100,
@@ -17,8 +17,8 @@ defmodule Capone.StatsTest do
           open: 100,
           ticker: "F",
           volume: 1_500
-        },
-        %Price{
+        ),
+        Price.new(
           close: 100,
           date: ~D[2017-01-04],
           high: 110,
@@ -26,8 +26,8 @@ defmodule Capone.StatsTest do
           open: 95,
           ticker: "F",
           volume: 500
-        },
-        %Price{
+        ),
+        Price.new(
           close: 10,
           date: ~D[2017-01-03],
           high: 10,
@@ -35,8 +35,8 @@ defmodule Capone.StatsTest do
           open: 10,
           ticker: "T",
           volume: 501
-        },
-        %Price{
+        ),
+        Price.new(
           close: 10,
           date: ~D[2017-01-04],
           high: 10,
@@ -44,7 +44,7 @@ defmodule Capone.StatsTest do
           open: 10,
           ticker: "T",
           volume: 499
-        }
+        )
       ]
     ]
   end

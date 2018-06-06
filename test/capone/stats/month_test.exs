@@ -8,7 +8,7 @@ defmodule Capone.Stats.MonthTest do
   setup_all do
     [
       prices: [
-        %Price{
+        Price.new(
           ticker: "F",
           date: ~D[2017-01-03],
           open: 90,
@@ -16,8 +16,8 @@ defmodule Capone.Stats.MonthTest do
           low: 80,
           close: 100,
           volume: 1_500
-        },
-        %Price{
+        ),
+        Price.new(
           ticker: "F",
           date: ~D[2017-01-04],
           open: 100,
@@ -25,7 +25,7 @@ defmodule Capone.Stats.MonthTest do
           low: 90,
           close: 110,
           volume: 500
-        }
+        )
       ]
     ]
   end

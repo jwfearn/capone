@@ -67,15 +67,16 @@ defmodule Quandl.PriceTest do
 
     [
       json_map: Jason.decode!(json_str),
-      price: %Price{
-        close: 12.59,
-        date: ~D[2017-01-03],
-        high: 12.6,
-        low: 12.13,
-        open: 12.2,
-        ticker: "F",
-        volume: 40_510_821
-      }
+      price:
+        Price.new(
+          close: 12.59,
+          date: ~D[2017-01-03],
+          high: 12.6,
+          low: 12.13,
+          open: 12.2,
+          ticker: "F",
+          volume: 40_510_821
+        )
     ]
   end
 

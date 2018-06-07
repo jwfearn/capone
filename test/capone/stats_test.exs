@@ -112,11 +112,13 @@ defmodule Capone.StatsTest do
     )
   end
 
-  test "encodes as valid JSON with expected structure", context do
-    context.prices
-    |> Stats.from_prices()
-    |> Stats.to_json_str()
-    |> assert_stats_json_structure()
+  test "security provides access by ticker symbol", context do
+    actual =
+      context.prices
+      |> Stats.from_prices()
+      |> Stats.security("F")
+
+    assert actual
   end
 
   defp assert_stats(
@@ -127,62 +129,15 @@ defmodule Capone.StatsTest do
          months,
          securities
        ) do
-    # Compares elements by equlaity so relies on test data without floating point rounding
+    # NOTE: The following assertions are simple element-by-element equality
+    # comparisons. Test data has been chosen to avoid values that cannot be
+    # precisely represented in floating point. We do more robust floating point
+    # testing in the Day, Month, and Security modules.
+
     assert stats.biggest_loser == biggest_loser
     assert stats.busy_days == busy_days
     assert stats.max_spread_days == max_spread_days
     assert stats.months == months
     assert stats.securities == securities
-  end
-
-  defp assert_stats_json_structure(json_str) do
-    security_json_structure = """
-    {
-      "count": 0,
-      "losing_days_count": 0,
-      "max_spread": 0,
-      "sum_volume": 0,
-      "ticker": ""
-    }
-    """
-
-    day_json_structure = """
-    {
-      "date": "",
-      "ticker": "",
-      "volume": 0
-    }
-    """
-
-    stats_json_structure_str = """
-    {
-      "biggest_loser": #{security_json_structure},
-      "busy_days": [#{day_json_structure}],
-      "months": {},
-      "securities": [#{security_json_structure}]
-    }
-    """
-
-    assert_json_structure(stats_json_structure_str, json_str)
-  end
-
-  def assert_json_structure(expected_json_structure_str, actual_json_str) do
-    {:ok, expected} = Jason.decode(expected_json_structure_str)
-    {:ok, actual} = Jason.decode(actual_json_str)
-    assert match_json_structure?(expected, actual)
-  end
-
-  defp match_json_structure?(nil, nil), do: true
-  defp match_json_structure?(true, true), do: true
-  defp match_json_structure?(false, false), do: true
-  defp match_json_structure?(a, b) when is_binary(a) and is_binary(b), do: true
-  defp match_json_structure?(a, b) when is_number(a) and is_number(b), do: true
-  defp match_json_structure?([], []), do: true
-  defp match_json_structure?([], [_ | _]), do: true
-  defp match_json_structure?([_ | _], []), do: true
-  defp match_json_structure?([a | _], [b | _]), do: match_json_structure?(a, b)
-
-  defp match_json_structure?(a, b) when is_map(a) and is_map(b) do
-    a |> Enum.all?(fn {k, v} when is_binary(k) -> match_json_structure?(v, Map.get(b, k)) end)
   end
 end

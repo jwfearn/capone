@@ -7,6 +7,29 @@ defmodule Capone do
   @default_tickers ~w[COF GOOGL MSFT]
   @default_date_range Date.range(~D[2017-01-01], ~D[2017-06-30])
   @default_precision 4
+  @default_biggest_loser false
+  @default_busy_days false
+  @default_max_spread_days false
+
+  @help """
+  Usage: capone [options]
+
+    --help, -h                  Prints this message and exits
+    --biggest-loser             Include security with minimum close - open
+    --busy-days                 Include days with volume >= 110% of average
+    --max-spread-days           Include days with maximum high - low
+    --all                       Shorthand for:
+                                --biggest-loser --busy_days --max-spread-days
+    --precision INT             Float rounding precision (default 4)
+  """
+
+  def main(args) do
+    args |> to_opts |> do_opts |> IO.puts()
+  end
+
+  def do_opts(opts) do
+    if opts[:help], do: @help, else: challenge(opts)
+  end
 
   def challenge(date_range \\ @default_date_range, tickers \\ @default_tickers, opts) do
     Client.new()
@@ -15,14 +38,32 @@ defmodule Capone do
     |> report(opts)
   end
 
+  defp to_opts(argv) do
+    {opts, _, _} =
+      OptionParser.parse(
+        argv,
+        switches: [
+          biggest_loser: :boolean,
+          busy_days: :boolean,
+          max_spread_days: :boolean,
+          precision: :integer
+        ],
+        aliases: [
+          h: :help
+        ]
+      )
+    opts
+  end
+
   defp report(stats, opts \\ []) do
+    all = !!opts[:all]
     opts =
       Keyword.merge(
         [
-          show_biggest_loser: false,
-          show_busy_days: false,
-          show_max_spread_days: false,
-          precision: 4
+          biggest_loser: all || @default_biggest_loser,
+          busy_days: all || @default_busy_days,
+          max_spread_days: all || @default_max_spread_days,
+          precision: @default_precision
         ],
         opts
       )
@@ -34,21 +75,21 @@ defmodule Capone do
       end)
 
     map =
-      if opts[:show_biggest_loser] do
+      if opts[:biggest_loser] do
         map |> Map.put("biggest_loser", loser_row(stats.biggest_loser, opts))
       else
         map
       end
 
     map =
-      if opts[:show_busy_days] do
+      if opts[:busy_days] do
         map |> Map.put("busy_days", busy_list(stats, opts))
       else
         map
       end
 
     map =
-      if opts[:show_max_spread_days] do
+      if opts[:max_spread_days] do
         map |> Map.put("maximum_spread_days", spread_list(stats, opts))
       else
         map
@@ -69,7 +110,7 @@ defmodule Capone do
       |> put_float_as("average_open", Month.avg_open(month), opts)
       |> put_float_as("average_close", Month.avg_close(month), opts)
 
-    if opts[:show_busy_days] do
+    if opts[:busy_days] do
       row |> put_float_as("average_volume", Month.avg_volume(month), opts)
     else
       row

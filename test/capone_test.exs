@@ -12,9 +12,9 @@ defmodule CaponeTest do
       Capone.challenge(
         Date.range(~D[2017-01-01], ~D[2017-01-05]),
         ~w[H I],
-        show_biggest_loser: true,
-        show_busy_days: true,
-        show_max_spread_days: true
+        biggest_loser: true,
+        busy_days: true,
+        max_spread_days: true
       )
       |> assert_challenge_json_shape()
     end

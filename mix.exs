@@ -6,6 +6,7 @@ defmodule Capone.MixProject do
       app: :capone,
       deps: deps(),
       elixir: "~> 1.6",
+      escript: [main_module: Capone],
       start_permanent: Mix.env() == :prod,
       version: "0.1.0"
     ]
@@ -20,8 +21,7 @@ defmodule Capone.MixProject do
   defp deps do
     [
       {:jason, "~> 1.0"},
-      {:tesla, "~> 0.10"},
-      {:timex, "~> 3.3"}
+      {:tesla, "~> 0.10"}
     ]
   end
 end

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+printf "\nCompiling...\n"
+mix deps.get && mix escript.build
+
+printf "\nRunning tests...\n"
+mix test
+
+printf "\nRunning program...\n"
+./capone --all | jq

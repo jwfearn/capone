@@ -2,22 +2,36 @@
 
 ### My Submission
 
-1. [Program source code](https://github.com/jwfearn/capone)
-2. To run, install
-   [Docker CE](https://www.docker.com/community-edition#/download),
-   then, in your shell:
-   ```sh
-   docker run -it jwfearn/capone
-   ```
-3. To run tests:
-   ```sh
-   docker run -it jwfearn/capone xxx
-   ```
+[Program source code](https://github.com/jwfearn/capone).
 
 ### Usage
-```
-mix capone.challenge
-```
+
+1.  Install [`git`](https://git-scm.com/downloads),
+    [`elixir`](https://elixir-lang.org/install.html), and
+    [`jq`](https://stedolan.github.io/jq/). On a Mac with
+    [Homebrew](https://brew.sh/), you can install the required software like
+    this:
+    ```sh
+    brew install git elixir jq
+    ```
+2.  Set the `QUANDL_API_KEY` environment variable to your Quandl API key:
+    ```sh
+    export QUANDL_API_KEY='your-key-goes-here'
+    ```
+3.  Clone then compile, test, and run with the `run` script:
+
+    ```sh
+    git clone git@github.com:jwfearn/capone.git
+    cd capone
+    ./run
+    ```
+
+4.  You can try different options by running the `capone` command directly, Use
+    `--help` for a list of options:
+
+    ```sh
+    ./capone --help
+    ```
 
 ### Capital One Investing Coding Test Instructions
 
@@ -40,12 +54,12 @@ format if you see fit.
 ```json
 {
   "GOOGL": [
-    {"month":"2017-01", "average_open": "815.43", "average_close": "$818.34"},
-    {"month":"2017-02", "average_open": "825.87", "average_close": "$822.73"},
-    {"month":"2017-03", "average_open": "945.24", "average_close": "$951.52"},
-    {"month":"2017-04", "average_open": "945.24", "average_close": "$951.52"},
-    {"month":"2017-05", "average_open": "945.24", "average_close": "$951.52"},
-    {"month":"2017-06", "average_open": "975.37", "average_close": "$977.11"}
+    { "month": "2017-01", "average_open": "815.43", "average_close": "$818.34" },
+    { "month": "2017-02", "average_open": "825.87", "average_close": "$822.73" },
+    { "month": "2017-03", "average_open": "945.24", "average_close": "$951.52" },
+    { "month": "2017-04", "average_open": "945.24", "average_close": "$951.52" },
+    { "month": "2017-05", "average_open": "945.24", "average_close": "$951.52" },
+    { "month": "2017-06", "average_open": "975.37", "average_close": "$977.11" }
   ]
 }
 ```

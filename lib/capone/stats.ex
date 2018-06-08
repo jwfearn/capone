@@ -11,13 +11,7 @@ defmodule Capone.Stats do
             # TODO: make this a map for direct access to securities by ticker
             securities: []
 
-  # TODO: Clarify: exceeds 10% of a: monthly avg vol or b) avg vol over full date range?
   @type t :: %__MODULE__{}
-
-  Protocol.derive(Jason.Encoder, __MODULE__)
-  Protocol.derive(Jason.Encoder, Day)
-  Protocol.derive(Jason.Encoder, Month)
-  Protocol.derive(Jason.Encoder, Security)
 
   @default_busy_factor 1.1
 
@@ -69,12 +63,6 @@ defmodule Capone.Stats do
     stats.securities |> Enum.find(&(&1.ticker == ticker))
   end
 
-  #  def to_json_str(%__MODULE__{} = stats) do
-  #    stats
-  #    |> Map.from_struct()
-  #    |> Jason.encode!(maps: :strict, escape: :html_safe)
-  #  end
-  #
   defp busy?(%Price{volume: volume, ticker: ticker}, %{} = securities_by_ticker, busy_factor) do
     avg_volume =
       securities_by_ticker

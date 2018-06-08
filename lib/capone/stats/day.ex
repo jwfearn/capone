@@ -31,5 +31,5 @@ defmodule Capone.Stats.Day do
   defp accumulate(acc, _, false), do: acc
   defp accumulate(acc, %Price{} = price, true), do: [from_price(price) | acc]
 
-  defp pass(_price), do: true
+  defp pass(_), do: true
 end
